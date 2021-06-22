@@ -24,34 +24,210 @@ Globals:
       Role: !Ref CodeDeployRole
 
 Resources:
-  GetHelloWorld:
-    Type: AWS::Serverless::Function
+---
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  DataSource:
+    Type: AWS::QuickSight::DataSource
     Properties:
-      FunctionName: !Sub 'awscodestar-${ProjectId}-lambda-GetHelloWorld'
-      Handler: index.get
-      Runtime: nodejs12.x
-      Role:
+      AwsAccountId: '888519273200'
+      DataSourceId: 'xrunzhi-sample-dataset-id'
+      Name: 'xrunzhi-sample-dataset-name'
+      DataSourceParameters:
+        AuroraPostgreSqlParameters:
+          Host: 'devportal-cluster.cluster-cufe1iwohaxm.us-east-1.rds.amazonaws.com'
+          Port: 5432
+          Database: 'session_state_store'
+      Credentials:
+        CredentialPair:
+          Username: 'xrunzhi'
+          Password: 'xyzabc123'
+      Permissions:
+        - Principal:
+            arn:aws:quicksight:us-east-1:888519273200:user/default/Admin/xrunzhi-Isengard,
+          Actions:
+            - "quicksight:UpdateDataSourcePermissions"
+            - "quicksight:DescribeDataSource"
+            - "quicksight:DescribeDataSourcePermissions"
+            - "quicksight:PassDataSource"
+            - "quicksight:UpdateDataSource"
+            - "quicksight:DeleteDataSource"
+      Type: 'AURORA_POSTGRESQL'
+      VpcConnectionProperties:
+        VpcConnectionArn:
+          arn:aws:quicksight:us-east-1:888519273200:vpcConnection/DefaultVpcConnection
+
+  DataSet:
+    DependsOn:
+      DataSource
+    Type: AWS::QuickSight::DataSet
+    Properties:
+      AwsAccountId: '888519273200'
+      ImportMode: SPICE
+      DataSetId: 'xrunzhi-sample-dataset-id'
+      Name: 'xrunzhi-sample-dataset-name'
+      Permissions:
+        - Principal:
+            arn:aws:quicksight:us-east-1:888519273200:user/default/Admin/xrunzhi-Isengard,
+          Actions:
+            - "quicksight:UpdateDataSetPermissions"
+            - "quicksight:DescribeDataSet"
+            - "quicksight:DescribeDataSetPermissions"
+            - "quicksight:PassDataSet"
+            - "quicksight:DescribeIngestion"
+            - "quicksight:ListIngestions"
+            - "quicksight:UpdateDataSet"
+            - "quicksight:DeleteDataSet"
+            - "quicksight:CreateIngestion"
+            - "quicksight:CancelIngestion"
+      PhysicalTableMap:
+        xrunzhi-bundling-dataset-id:
+          RelationalTable:
+            DataSourceArn:
+              Ref: DataSource
+            InputColumns:
+              - Name: 'sessionid'
+                Type: 'STRING'
+              - Name: 'state'
+                Type: 'STRING'
+            Name: session
+
+  Theme:
+    Type: AWS::QuickSight::Theme
+    Properties:
+      AwsAccountId: '888519273200'
+      BaseThemeId: 'SEASIDE'
+      Configuration:
+        DataColorPalette:
+          Colors:
+            - '#293C66'
+            - '#FF9747'
+            - '#DFE9AF'
+            - '#AFE0CE'
+            - '#F78D95'
+            - '#DED1CE'
+            - '#F13030'
+            - '#514B23'
+          EmptyFillColor: 'F0F3F9'
+          MinMaxGradient:
+            - '#F0F3F9'
+            - '#232F3E'
+        Sheet:
+          Tile:
+            Border:
+              Show: true
+          TileLayout:
+            Gutter:
+              Show: false
+            Margin:
+              Show: false
+        UIColorPalette:
+          Accent: '#293C66'
+          AccentForeground: '#FFFFFF'
+          Danger: '#EA5077'
+          DangerForeground: '#FFFFFF'
+          Dimension: '#219FD7'
+          DimensionForeground: '#FFFFFF'
+          Measure: '#2CAD00'
+          MeasureForeground: '#FFFFFF'
+          PrimaryBackground: '#FFFFFF'
+          PrimaryForeground: '#2A414E'
+          SecondaryBackground: '#F0F3F5'
+          SecondaryForeground: '#2A414E'
+          Success: '#2CAD00'
+          SuccessForeground: '#FFFFFF'
+          Warning: '#FF9900'
+          WarningForeground: '#FFFFFF'
+
+
+      ThemeId: 'xrunzhi-sample-theme-id'
+      Name: 'xrunzhi-sample-theme-name'
+      Permissions:
+        - Principal:
+            arn:aws:quicksight:us-east-1:888519273200:user/default/Admin/xrunzhi-Isengard,
+          Actions:
+            - "quicksight:DescribeTheme"
+            - "quicksight:DescribeThemeAlias"
+            - "quicksight:DescribeThemePermissions"
+            - "quicksight:CreateTheme"
+            - "quicksight:CreateThemeAlias"
+            - "quicksight:DeleteTheme"
+            - "quicksight:DeleteThemeAlias"
+            - "quicksight:UpdateTheme"
+            - "quicksight:UpdateThemeAlias"
+            - "quicksight:UpdateThemePermissions"
+
+  Template:
+    DependsOn: DataSet
+    Type: AWS::QuickSight::Template
+    Properties:
+      AwsAccountId: '888519273200'
+      TemplateId: 'xrunzhi-sample-template-id'
+      Name: 'xrunzhi-sample-template-name'
+      SourceEntity:
+        SourceAnalysis:
+          Arn: 'arn:aws:quicksight:us-east-2:266266396604:analysis/58f72df9-ee5f-41c3-ad4b-5bbda70e3989'
+          DataSetReferences:
+            - DataSetPlaceholder: 'inventory-dataset-placeholder'
+              DataSetArn: 'arn:aws:quicksight:us-east-2:266266396604:dataset/deb3f771-7bb4-4b2d-b763-dc9a7ba265e3'
+
+  Analysis:
+    DependsOn: Template
+    Type: AWS::QuickSight::Analysis
+    Properties:
+      AwsAccountId: '888519273200'
+      AnalysisId: 'xrunzhi-sample-analysis-id'
+      Name: 'xrunzhi-sample-analysis-name'
+      SourceEntity:
+        SourceTemplate:
+          Arn:
+            Fn::GetAtt:
+            - Template
+            - Arn
+          DataSetReferences:
+            - DataSetPlaceholder: 'inventory-dataset-placeholder'
+              DataSetArn:
+                Fn::GetAtt:
+                  - DataSet
+                  - Arn
+
+  Dashboard:
+    DependsOn:
+      - Template
+      - Theme
+      - Analysis
+    Type: AWS::QuickSight::Dashboard
+    Properties:
+      AwsAccountId: '888519273200'
+      DashboardId: 'xrunzhi-sample-dashboard-id'
+      Name: 'xrunzhi-sample-dashboard-name'
+      Permissions:
+        - Principal:
+            arn:aws:quicksight:us-east-1:888519273200:user/default/Admin/xrunzhi-Isengard,
+          Actions:
+            - "quicksight:CreateDashboard"
+            - "quicksight:DeleteDashboard"
+            - "quicksight:DescribeDashboard"
+            - "quicksight:DescribeDashboardPermissions"
+            - "quicksight:ListDashboards"
+            - "quicksight:ListDashboardVersions"
+            - "quicksight:SearchDashboards"
+            - "quicksight:UpdateDashboard"
+            - "quicksight:UpdateDashboardPermissions"
+            - "quicksight:UpdateDashboardPublishedVersion"
+      SourceEntity:
+        SourceTemplate:
+          Arn:
+            Fn::GetAtt:
+              - Template
+              - Arn
+          DataSetReferences:
+            - DataSetPlaceholder: 'inventory-dataset-placeholder'
+              DataSetArn:
+                Fn::GetAtt:
+                  - DataSet
+                  - Arn
+      ThemeArn:
         Fn::GetAtt:
-        - LambdaExecutionRole
-        - Arn
-      Events:
-        GetEvent:
-          Type: Api
-          Properties:
-            Path: /
-            Method: get
-  LambdaExecutionRole:
-    Description: Creating service role in IAM for AWS Lambda
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: !Sub 'CodeStar-${ProjectId}-Execution${Stage}'
-      AssumeRolePolicyDocument:
-        Statement:
-        - Effect: Allow
-          Principal:
-            Service: [lambda.amazonaws.com]
-          Action: sts:AssumeRole
-      Path: /
-      ManagedPolicyArns:
-        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
-      PermissionsBoundary: !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/CodeStar_${ProjectId}_PermissionsBoundary'
+          - Theme
+          - Arn
