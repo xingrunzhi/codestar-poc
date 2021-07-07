@@ -15,7 +15,7 @@ Parameters:
     Default: ''
   BundleS3HttpsLocation:
     Type: String
-    Default: "https://quicksight-bundling-demo-888519273200/quicksight"
+    Default: "https://quicksight-bundling-demo-888519273200.s3.amazonaws.com"
   DataSourceUsername:
     Type: String
     Default: "xrunzhi"
@@ -45,7 +45,7 @@ Resources:
         Fn::Join:
           - /
           - - Ref: BundleS3HttpsLocation
-            - nestedStacks
+            - quicksight
             - sampleTheme.template.yml
 
   QSDataSourceStack:
