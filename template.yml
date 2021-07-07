@@ -15,7 +15,7 @@ Parameters:
     Default: ''
   BundleS3HttpsLocation:
     Type: String
-    Default: "https://aws-codestar-us-east-1-888519273200-codestar-poc-app.s3.amazonaws.com/quicksight"
+    Default: "https://quicksight-bundling-demo-888519273200/quicksight"
   DataSourceUsername:
     Type: String
     Default: "xrunzhi"
