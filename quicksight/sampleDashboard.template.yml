@@ -1,0 +1,38 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  TemplateArn:
+    Type: String
+  ThemeArn:
+    Type: String
+
+Resources:
+  SampleDashboard:
+    Type: AWS::QuickSight::Dashboard
+    Properties:
+      AwsAccountId:
+        Ref: AWS::AccountId
+      DashboardId: 'xrunzhi-sample-dashboard-id-v3'
+      Name: 'xrunzhi-sample-dashboard-name-v3'
+      Permissions:
+        - Principal: arn:aws:quicksight:us-east-1:888519273200:user/default/Admin/xrunzhi-Isengard
+          Actions:
+            - quicksight:DescribeDashboard
+            - quicksight:ListDashboardVersions
+            - quicksight:UpdateDashboardPermissions
+            - quicksight:QueryDashboard
+            - quicksight:UpdateDashboard
+            - quicksight:DeleteDashboard
+            - quicksight:UpdateDashboardPublishedVersion
+            - quicksight:DescribeDashboardPermissions
+      SourceEntity:
+        SourceTemplate:
+          Arn:
+            Ref: TemplateArn
+          DataSetReferences:
+            - DataSetPlaceholder: 'inventory-dataset-placeholder'
+              DataSetArn: 'arn:aws:quicksight:us-east-1:888519273200:dataset/926a5dbb-deea-4ea5-b2be-7ef7655cf247'
+      ThemeArn:
+        Ref: ThemeArn

@@ -1,0 +1,75 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Outputs:
+  SampleThemeArn:
+    Value:
+      Fn::GetAtt:
+        - SampleTheme
+        - Arn
+
+Resources:
+  SampleTheme:
+    Type: AWS::QuickSight::Theme
+    Properties:
+      AwsAccountId:
+        Ref: AWS::AccountId
+      BaseThemeId: 'SEASIDE'
+      Configuration:
+        DataColorPalette:
+          Colors:
+            - '#293C66'
+            - '#FF9747'
+            - '#DFE9AF'
+            - '#AFE0CE'
+            - '#F78D95'
+            - '#DED1CE'
+            - '#F13030'
+            - '#514B23'
+          EmptyFillColor: '#F0F3F9'
+          MinMaxGradient:
+            - '#F0F3F9'
+            - '#232F3E'
+        Sheet:
+          Tile:
+            Border:
+              Show: true
+          TileLayout:
+            Gutter:
+              Show: false
+            Margin:
+              Show: false
+        UIColorPalette:
+          Accent: '#293C66'
+          AccentForeground: '#FFFFFF'
+          Danger: '#EA5077'
+          DangerForeground: '#FFFFFF'
+          Dimension: '#219FD7'
+          DimensionForeground: '#FFFFFF'
+          Measure: '#2CAD00'
+          MeasureForeground: '#FFFFFF'
+          PrimaryBackground: '#FFFFFF'
+          PrimaryForeground: '#2A414E'
+          SecondaryBackground: '#F0F3F5'
+          SecondaryForeground: '#2A414E'
+          Success: '#2CAD00'
+          SuccessForeground: '#FFFFFF'
+          Warning: '#FF9900'
+          WarningForeground: '#FFFFFF'
+      ThemeId: 'xrunzhi-sample-theme-id-v3'
+      Name: 'xrunzhi-sample-theme-name-v3'
+      Permissions:
+        - Principal: arn:aws:quicksight:us-east-1:888519273200:user/default/Admin/xrunzhi-Isengard
+          Actions:
+            - quicksight:ListThemeVersions
+            - quicksight:UpdateThemeAlias
+            - quicksight:DescribeThemeAlias
+            - quicksight:UpdateThemePermissions
+            - quicksight:DeleteThemeAlias
+            - quicksight:DeleteTheme
+            - quicksight:ListThemeAliases
+            - quicksight:DescribeTheme
+            - quicksight:CreateThemeAlias
+            - quicksight:UpdateTheme
+            - quicksight:DescribeThemePermissions

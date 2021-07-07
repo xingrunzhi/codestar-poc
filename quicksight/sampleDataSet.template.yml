@@ -1,0 +1,41 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  SampleDataSourceArn:
+    Type: String
+
+Resources:
+  SampleDataSet:
+    Type: AWS::QuickSight::DataSet
+    Properties: 
+      AwsAccountId: 
+        Ref: AWS::AccountId
+      DataSetId: 'sample-dataset-id-3'
+      Name: 'sample-dataset-name-3'
+      ImportMode: SPICE
+      Permissions:
+        - Principal: arn:aws:quicksight:us-east-1:888519273200:user/default/Admin/xrunzhi-Isengard
+          Actions:
+            - quicksight:UpdateDataSetPermissions
+            - quicksight:DescribeDataSet
+            - quicksight:DescribeDataSetPermissions
+            - quicksight:PassDataSet
+            - quicksight:DescribeIngestion
+            - quicksight:ListIngestions
+            - quicksight:UpdateDataSet
+            - quicksight:DeleteDataSet
+            - quicksight:CreateIngestion
+            - quicksight:CancelIngestion
+      PhysicalTableMap:
+        sample-dataset-map:
+          RelationalTable:
+            DataSourceArn:
+              Ref: SampleDataSourceArn
+            InputColumns:
+              - Name: sessionid
+                Type: INTEGER
+              - Name: state
+                Type: STRING
+            Name: 'session'

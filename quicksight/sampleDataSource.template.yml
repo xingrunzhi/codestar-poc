@@ -1,0 +1,60 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  DataSourceUsername:
+    Type: String
+  DataSourcePassword:
+    Type: String
+  DataSourceDatabase:
+    Type: String
+  DataSourceHost:
+    Type: String
+  DataSourcePort:
+    Type: Number
+  DataSourceVpnConnectionArn:
+    Type: String
+
+Outputs:
+  SampleDataSourceArn:
+    Value:
+      Fn::GetAtt:
+        - SampleDataSource
+        - Arn
+
+Resources:
+  SampleDataSource:
+    Type: AWS::QuickSight::DataSource
+    Properties: 
+      AwsAccountId:
+        Ref: AWS::AccountId
+      DataSourceId: 'sample-datasource-id-3'
+      Name: 'sample-datasource-name-3'
+      Credentials:
+        CredentialPair:
+          Password:
+            Ref: DataSourcePassword
+          Username:
+            Ref: DataSourceUsername
+      DataSourceParameters: 
+        AuroraPostgreSqlParameters:
+          Database:
+            Ref: DataSourceDatabase
+          Host:
+            Ref: DataSourceHost
+          Port:
+            Ref: DataSourcePort
+      Permissions:
+        - Principal: arn:aws:quicksight:us-east-1:888519273200:user/default/Admin/xrunzhi-Isengard
+          Actions:
+            - quicksight:UpdateDataSourcePermissions
+            - quicksight:DescribeDataSource
+            - quicksight:DescribeDataSourcePermissions
+            - quicksight:PassDataSource
+            - quicksight:UpdateDataSource
+            - quicksight:DeleteDataSource
+      Type: AURORA_POSTGRESQL
+      VpcConnectionProperties: 
+        VpcConnectionArn:
+          Ref: DataSourceVpnConnectionArn

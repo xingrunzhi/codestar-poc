@@ -1,233 +1,139 @@
-AWSTemplateFormatVersion: 2010-09-09
-Transform:
-- AWS::Serverless-2016-10-31
-- AWS::CodeStar
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
 
 Parameters:
-  ProjectId:
+  BundleS3HttpsLocation:
     Type: String
-    Description: AWS CodeStar projectID used to associate new resources to team members
-  CodeDeployRole:
+    Default: "https://sam-dev-us-east-1-xrunzhi-qsasset-888519273200.s3.amazonaws.com/demo/QuickSightResources"
+  DataSourceUsername:
     Type: String
-    Description: IAM role to allow AWS CodeDeploy to manage deployment of AWS Lambda functions
-  Stage:
+    Default: "xrunzhi"
+  DataSourcePassword:
     Type: String
-    Description: The name for a project pipeline stage, such as Staging or Prod, for which resources are provisioned and deployed.
-    Default: ''
-
-Globals:
-  Function:
-    AutoPublishAlias: live
-    DeploymentPreference:
-      Enabled: true
-      Type: Canary10Percent5Minutes
-      Role: !Ref CodeDeployRole
+    Default: "abc123!@#"
+  DataSourceDatabase:
+    Type: String
+    Default: "session_state_store"
+  DataSourceHost:
+    Type: String
+    Default: "devportal-cluster.cluster-cufe1iwohaxm.us-east-1.rds.amazonaws.com"
+  DataSourcePort:
+    Type: Number
+    Default: 5432
+  DataSourceVpnConnectionArn:
+    Type: String
+    Default: "arn:aws:quicksight:us-east-1:888519273200:vpcConnection/DefaultVpcConnection"
 
 Resources:
----
-AWSTemplateFormatVersion: 2010-09-09
-Resources:
-  DataSource:
-    Type: AWS::QuickSight::DataSource
+  QSThemeStack:
+    Type: AWS::CloudFormation::Stack
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Retain
     Properties:
-      AwsAccountId: '888519273200'
-      DataSourceId: 'xrunzhi-sample-dataset-id'
-      Name: 'xrunzhi-sample-dataset-name'
-      DataSourceParameters:
-        AuroraPostgreSqlParameters:
-          Host: 'devportal-cluster.cluster-cufe1iwohaxm.us-east-1.rds.amazonaws.com'
-          Port: 5432
-          Database: 'session_state_store'
-      Credentials:
-        CredentialPair:
-          Username: 'xrunzhi'
-          Password: 'xyzabc123'
-      Permissions:
-        - Principal:
-            arn:aws:quicksight:us-east-1:888519273200:user/default/Admin/xrunzhi-Isengard,
-          Actions:
-            - "quicksight:UpdateDataSourcePermissions"
-            - "quicksight:DescribeDataSource"
-            - "quicksight:DescribeDataSourcePermissions"
-            - "quicksight:PassDataSource"
-            - "quicksight:UpdateDataSource"
-            - "quicksight:DeleteDataSource"
-      Type: 'AURORA_POSTGRESQL'
-      VpcConnectionProperties:
-        VpcConnectionArn:
-          arn:aws:quicksight:us-east-1:888519273200:vpcConnection/DefaultVpcConnection
+      TemplateURL:
+        Fn::Join:
+          - /
+          - - Ref: BundleS3HttpsLocation
+            - nestedStacks
+            - sampleTheme.template.yml
 
-  DataSet:
+  QSDataSourceStack:
+    Type: AWS::CloudFormation::Stack
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Retain
+    Properties:
+      Parameters:
+        DataSourceUsername:
+          Ref: DataSourceUsername
+        DataSourcePassword:
+          Ref: DataSourcePassword
+        DataSourceDatabase:
+          Ref: DataSourceDatabase
+        DataSourceHost:
+          Ref: DataSourceHost
+        DataSourcePort:
+          Ref: DataSourcePort
+        DataSourceVpnConnectionArn:
+          Ref: DataSourceVpnConnectionArn
+      TemplateURL:
+        Fn::Join:
+          - /
+          - - Ref: BundleS3HttpsLocation
+            - nestedStacks
+            - sampleDataSource.template.yml
+
+  QSDataSetStack:
+    DependsOn: QSDataSourceStack
+    Type: AWS::CloudFormation::Stack
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Retain
+    Properties:
+      Parameters:
+        SampleDataSourceArn:
+          Fn::GetAtt:
+            - QSDataSourceStack
+            - Outputs.SampleDataSourceArn
+      TemplateURL:
+        Fn::Join:
+          - /
+          - - Ref: BundleS3HttpsLocation
+            - nestedStacks
+            - sampleDataSet.template.yml
+
+  QSTemplateStack:
+    Type: AWS::CloudFormation::Stack
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Retain
+    Properties:
+      TemplateURL:
+        Fn::Join:
+          - /
+          - - Ref: BundleS3HttpsLocation
+            - nestedStacks
+            - sampleTemplate.template.yml
+
+  QSDashboardStack:
     DependsOn:
-      DataSource
-    Type: AWS::QuickSight::DataSet
+    - QSDataSourceStack
+    - QSDataSetStack
+    - QSThemeStack
+    - QSAnalysisStack
+    - QSTemplateStack
+    Type: AWS::CloudFormation::Stack
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Retain
     Properties:
-      AwsAccountId: '888519273200'
-      ImportMode: SPICE
-      DataSetId: 'xrunzhi-sample-dataset-id'
-      Name: 'xrunzhi-sample-dataset-name'
-      Permissions:
-        - Principal:
-            arn:aws:quicksight:us-east-1:888519273200:user/default/Admin/xrunzhi-Isengard,
-          Actions:
-            - "quicksight:UpdateDataSetPermissions"
-            - "quicksight:DescribeDataSet"
-            - "quicksight:DescribeDataSetPermissions"
-            - "quicksight:PassDataSet"
-            - "quicksight:DescribeIngestion"
-            - "quicksight:ListIngestions"
-            - "quicksight:UpdateDataSet"
-            - "quicksight:DeleteDataSet"
-            - "quicksight:CreateIngestion"
-            - "quicksight:CancelIngestion"
-      PhysicalTableMap:
-        xrunzhi-bundling-dataset-id:
-          RelationalTable:
-            DataSourceArn:
-              Ref: DataSource
-            InputColumns:
-              - Name: 'sessionid'
-                Type: 'STRING'
-              - Name: 'state'
-                Type: 'STRING'
-            Name: session
+      Parameters:
+        TemplateArn:
+          Fn::GetAtt:
+            - QSTemplateStack
+            - Outputs.SampleTemplateArn
+        ThemeArn:
+          Fn::GetAtt:
+            - QSThemeStack
+            - Outputs.SampleThemeArn
+      TemplateURL:
+        Fn::Join:
+          - /
+          - - Ref: BundleS3HttpsLocation
+            - nestedStacks
+            - sampleDashboard.template.yml
 
-  Theme:
-    Type: AWS::QuickSight::Theme
+  QSAnalysisStack:
+    DependsOn: QSTemplateStack
+    Type: AWS::CloudFormation::Stack
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Retain
     Properties:
-      AwsAccountId: '888519273200'
-      BaseThemeId: 'SEASIDE'
-      Configuration:
-        DataColorPalette:
-          Colors:
-            - '#293C66'
-            - '#FF9747'
-            - '#DFE9AF'
-            - '#AFE0CE'
-            - '#F78D95'
-            - '#DED1CE'
-            - '#F13030'
-            - '#514B23'
-          EmptyFillColor: 'F0F3F9'
-          MinMaxGradient:
-            - '#F0F3F9'
-            - '#232F3E'
-        Sheet:
-          Tile:
-            Border:
-              Show: true
-          TileLayout:
-            Gutter:
-              Show: false
-            Margin:
-              Show: false
-        UIColorPalette:
-          Accent: '#293C66'
-          AccentForeground: '#FFFFFF'
-          Danger: '#EA5077'
-          DangerForeground: '#FFFFFF'
-          Dimension: '#219FD7'
-          DimensionForeground: '#FFFFFF'
-          Measure: '#2CAD00'
-          MeasureForeground: '#FFFFFF'
-          PrimaryBackground: '#FFFFFF'
-          PrimaryForeground: '#2A414E'
-          SecondaryBackground: '#F0F3F5'
-          SecondaryForeground: '#2A414E'
-          Success: '#2CAD00'
-          SuccessForeground: '#FFFFFF'
-          Warning: '#FF9900'
-          WarningForeground: '#FFFFFF'
-
-
-      ThemeId: 'xrunzhi-sample-theme-id'
-      Name: 'xrunzhi-sample-theme-name'
-      Permissions:
-        - Principal:
-            arn:aws:quicksight:us-east-1:888519273200:user/default/Admin/xrunzhi-Isengard,
-          Actions:
-            - "quicksight:DescribeTheme"
-            - "quicksight:DescribeThemeAlias"
-            - "quicksight:DescribeThemePermissions"
-            - "quicksight:CreateTheme"
-            - "quicksight:CreateThemeAlias"
-            - "quicksight:DeleteTheme"
-            - "quicksight:DeleteThemeAlias"
-            - "quicksight:UpdateTheme"
-            - "quicksight:UpdateThemeAlias"
-            - "quicksight:UpdateThemePermissions"
-
-  Template:
-    DependsOn: DataSet
-    Type: AWS::QuickSight::Template
-    Properties:
-      AwsAccountId: '888519273200'
-      TemplateId: 'xrunzhi-sample-template-id'
-      Name: 'xrunzhi-sample-template-name'
-      SourceEntity:
-        SourceAnalysis:
-          Arn: 'arn:aws:quicksight:us-east-2:266266396604:analysis/58f72df9-ee5f-41c3-ad4b-5bbda70e3989'
-          DataSetReferences:
-            - DataSetPlaceholder: 'inventory-dataset-placeholder'
-              DataSetArn: 'arn:aws:quicksight:us-east-2:266266396604:dataset/deb3f771-7bb4-4b2d-b763-dc9a7ba265e3'
-
-  Analysis:
-    DependsOn: Template
-    Type: AWS::QuickSight::Analysis
-    Properties:
-      AwsAccountId: '888519273200'
-      AnalysisId: 'xrunzhi-sample-analysis-id'
-      Name: 'xrunzhi-sample-analysis-name'
-      SourceEntity:
-        SourceTemplate:
-          Arn:
-            Fn::GetAtt:
-            - Template
-            - Arn
-          DataSetReferences:
-            - DataSetPlaceholder: 'inventory-dataset-placeholder'
-              DataSetArn:
-                Fn::GetAtt:
-                  - DataSet
-                  - Arn
-
-  Dashboard:
-    DependsOn:
-      - Template
-      - Theme
-      - Analysis
-    Type: AWS::QuickSight::Dashboard
-    Properties:
-      AwsAccountId: '888519273200'
-      DashboardId: 'xrunzhi-sample-dashboard-id'
-      Name: 'xrunzhi-sample-dashboard-name'
-      Permissions:
-        - Principal:
-            arn:aws:quicksight:us-east-1:888519273200:user/default/Admin/xrunzhi-Isengard,
-          Actions:
-            - "quicksight:CreateDashboard"
-            - "quicksight:DeleteDashboard"
-            - "quicksight:DescribeDashboard"
-            - "quicksight:DescribeDashboardPermissions"
-            - "quicksight:ListDashboards"
-            - "quicksight:ListDashboardVersions"
-            - "quicksight:SearchDashboards"
-            - "quicksight:UpdateDashboard"
-            - "quicksight:UpdateDashboardPermissions"
-            - "quicksight:UpdateDashboardPublishedVersion"
-      SourceEntity:
-        SourceTemplate:
-          Arn:
-            Fn::GetAtt:
-              - Template
-              - Arn
-          DataSetReferences:
-            - DataSetPlaceholder: 'inventory-dataset-placeholder'
-              DataSetArn:
-                Fn::GetAtt:
-                  - DataSet
-                  - Arn
-      ThemeArn:
-        Fn::GetAtt:
-          - Theme
-          - Arn
+      Parameters:
+        TemplateArn:
+          Fn::GetAtt:
+            - QSTemplateStack
+            - Outputs.SampleTemplateArn
+      TemplateURL:
+        Fn::Join:
+          - /
+          - - Ref: BundleS3HttpsLocation
+            - nestedStacks
+            - sampleAnalysis.template.yml

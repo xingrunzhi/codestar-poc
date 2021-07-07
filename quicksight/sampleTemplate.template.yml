@@ -1,0 +1,31 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Outputs:
+  SampleTemplateArn:
+    Value:
+      Fn::GetAtt:
+        - SampleTemplate
+        - Arn
+
+Resources:
+  SampleTemplate:
+    Type: AWS::QuickSight::Template
+    Properties:
+      AwsAccountId:
+        Ref: AWS::AccountId
+      TemplateId: 'xrunzhi-sample-template-id-v3'
+      Name: 'xrunzhi-sample-template-name-v3'
+      SourceEntity:
+        SourceTemplate:
+          Arn: 'arn:aws:quicksight:us-east-2:266266396604:template/inventory-dataset-placeholder-id'
+      Permissions:
+        - Principal: arn:aws:quicksight:us-east-1:888519273200:user/default/Admin/xrunzhi-Isengard
+          Actions:
+            - "quicksight:CreateTemplate"
+            - "quicksight:DescribeTemplate"
+            - "quicksight:ListTemplates"
+            - "quicksight:DescribeTemplatePermissions"
+            - "quicksight:DeleteTemplate"
+            - "quicksight:UpdateTemplate"
