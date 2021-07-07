@@ -3,9 +3,19 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Parameters:
+  ProjectId:
+    Type: String
+    Description: AWS CodeStar projectID used to associate new resources to team members
+  CodeDeployRole:
+    Type: String
+    Description: IAM role to allow AWS CodeDeploy to manage deployment of AWS Lambda functions
+  Stage:
+    Type: String
+    Description: The name for a project pipeline stage, such as Staging or Prod, for which resources are provisioned and deployed.
+    Default: ''
   BundleS3HttpsLocation:
     Type: String
-    Default: "https://sam-dev-us-east-1-xrunzhi-qsasset-888519273200.s3.amazonaws.com/demo/QuickSightResources"
+    Default: "https://aws-codestar-us-east-1-888519273200-codestar-poc-app.s3.amazonaws.com/quicksight"
   DataSourceUsername:
     Type: String
     Default: "xrunzhi"
