@@ -18,6 +18,8 @@ This sample includes:
 * tests/ - this directory contains unit tests for your application
 * template-configuration.json - this file contains the project ARN with placeholders used for tagging resources with the project ID
 
+I have removed the boundary of the iam role
+
 What Do I Do Next?
 ------------------
 
