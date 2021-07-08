@@ -13,7 +13,7 @@ Parameters:
     Type: String
   DataSourcePort:
     Type: Number
-  DataSourceVpnConnectionArn:
+  DataSourceVpcConnectionArn:
     Type: String
 
 Outputs:
@@ -57,4 +57,4 @@ Resources:
       Type: AURORA_POSTGRESQL
       VpcConnectionProperties: 
         VpcConnectionArn:
-          Ref: DataSourceVpnConnectionArn
+          Ref: DataSourceVpcConnectionArn

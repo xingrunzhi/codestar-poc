@@ -2,6 +2,29 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: "DataSource Configuration"
+        Parameters:
+          - DataSourceVpcConnectionArn
+          - DataSourceUsername
+          - DataSourcePassword
+          - DataSourceHost
+          - DataSourcePort
+          - DataSourceDatabase
+      - Label:
+          default: " configuration"
+        Parameters:
+          - BundleS3HttpsLocation
+    ParameterLabels:
+      DataSourceVpcConnectionArn:
+        default: "Which VPC connection should be used for data source"
+      BundleS3HttpsLocation:
+        default: "The https S3 location of where quicksight nested stacks are stored"
+
+
 Parameters:
   ProjectId:
     Type: String
@@ -31,7 +54,7 @@ Parameters:
   DataSourcePort:
     Type: Number
     Default: 5432
-  DataSourceVpnConnectionArn:
+  DataSourceVpcConnectionArn:
     Type: String
     Default: "arn:aws:quicksight:us-east-1:888519273200:vpcConnection/DefaultVpcConnection"
 
@@ -64,8 +87,8 @@ Resources:
           Ref: DataSourceHost
         DataSourcePort:
           Ref: DataSourcePort
-        DataSourceVpnConnectionArn:
-          Ref: DataSourceVpnConnectionArn
+        DataSourceVpcConnectionArn:
+          Ref: DataSourceVpcConnectionArn
       TemplateURL:
         Fn::Join:
           - /
