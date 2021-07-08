@@ -26,16 +26,6 @@ Metadata:
 
 
 Parameters:
-  ProjectId:
-    Type: String
-    Description: AWS CodeStar projectID used to associate new resources to team members
-  CodeDeployRole:
-    Type: String
-    Description: IAM role to allow AWS CodeDeploy to manage deployment of AWS Lambda functions
-  Stage:
-    Type: String
-    Description: The name for a project pipeline stage, such as Staging or Prod, for which resources are provisioned and deployed.
-    Default: ''
   BundleS3HttpsLocation:
     Type: String
     Default: "https://quicksight-bundling-demo-888519273200.s3.amazonaws.com"
