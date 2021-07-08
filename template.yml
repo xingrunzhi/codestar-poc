@@ -70,7 +70,7 @@ Resources:
         Fn::Join:
           - /
           - - Ref: BundleS3HttpsLocation
-            - nestedStacks
+            - quicksight
             - sampleDataSource.template.yml
 
   QSDataSetStack:
@@ -88,7 +88,7 @@ Resources:
         Fn::Join:
           - /
           - - Ref: BundleS3HttpsLocation
-            - nestedStacks
+            - quicksight
             - sampleDataSet.template.yml
 
   QSTemplateStack:
@@ -100,7 +100,7 @@ Resources:
         Fn::Join:
           - /
           - - Ref: BundleS3HttpsLocation
-            - nestedStacks
+            - quicksight
             - sampleTemplate.template.yml
 
   QSDashboardStack:
@@ -127,7 +127,7 @@ Resources:
         Fn::Join:
           - /
           - - Ref: BundleS3HttpsLocation
-            - nestedStacks
+            - quicksight
             - sampleDashboard.template.yml
 
   QSAnalysisStack:
@@ -145,5 +145,5 @@ Resources:
         Fn::Join:
           - /
           - - Ref: BundleS3HttpsLocation
-            - nestedStacks
+            - quicksight
             - sampleAnalysis.template.yml
