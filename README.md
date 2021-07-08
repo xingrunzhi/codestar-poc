@@ -19,7 +19,7 @@ This sample includes:
 * template-configuration.json - this file contains the project ARN with placeholders used for tagging resources with the project ID
 
 
-What Do I Do Next?
+
 ------------------
 
 If you have checked out a local copy of your repository you can start making
