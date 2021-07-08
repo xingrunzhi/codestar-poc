@@ -35,6 +35,9 @@ Parameters:
     Type: String
     Default: "arn:aws:quicksight:us-east-1:888519273200:vpcConnection/DefaultVpcConnection"
 
+Mappings:
+  
+
 Resources:
   QSThemeStack:
     Type: AWS::CloudFormation::Stack
