@@ -50,8 +50,9 @@ Resources:
       Permissions:
         - Principal:
             Fn::Join:
-              - !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/
-              - Ref: QuickSightUser
+              - ''
+              - - !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/
+                - Ref: QuickSightUser
           Actions:
             - quicksight:UpdateDataSourcePermissions
             - quicksight:DescribeDataSource
