@@ -46,7 +46,7 @@ Resources:
           Port:
             Ref: DataSourcePort
       Permissions:
-        - Principal: !Sub arn:aws:quicksight:us-east-1:${AWS::AccountId}:user/default/*
+        - Principal: !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:namespace/default
           Actions:
             - quicksight:UpdateDataSourcePermissions
             - quicksight:DescribeDataSource
