@@ -25,10 +25,10 @@ Resources:
       Name: 'sample-dataset-name-3'
       ImportMode: SPICE
       Permissions:
-        - Principal: !Sub
-            - arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/${user}
-            - user:
-              Ref: QuickSightUser
+        - Principal:
+            Fn::Join:
+              - !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/
+              - Ref: QuickSightUser
           Actions:
             - quicksight:UpdateDataSetPermissions
             - quicksight:DescribeDataSet

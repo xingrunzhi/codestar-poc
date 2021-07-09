@@ -21,10 +21,10 @@ Resources:
       DashboardId: 'xrunzhi-sample-dashboard-id-v3'
       Name: 'xrunzhi-sample-dashboard-name-v3'
       Permissions:
-        - Principal: !Sub
-          - arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/${user}
-          - user:
-            Ref: QuickSightUser
+        - Principal:
+            Fn::Join:
+              - !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/
+              - Ref: QuickSightUser
           Actions:
             - quicksight:DescribeDashboard
             - quicksight:ListDashboardVersions

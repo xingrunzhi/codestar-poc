@@ -25,10 +25,10 @@ Resources:
         SourceTemplate:
           Arn: 'arn:aws:quicksight:us-east-2:266266396604:template/inventory-dataset-placeholder-id'
       Permissions:
-        - Principal: !Sub
-            - arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/${user}
-            - user:
-              Ref: QuickSightUser
+        - Principal:
+            Fn::Join:
+              - !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/
+              - Ref: QuickSightUser
           Actions:
             - quicksight:CreateTemplate
             - quicksight:DescribeTemplate

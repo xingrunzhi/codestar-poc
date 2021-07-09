@@ -64,10 +64,10 @@ Resources:
       ThemeId: 'xrunzhi-sample-theme-id-v3'
       Name: 'xrunzhi-sample-theme-name-v3'
       Permissions:
-        - Principal: !Sub
-            - arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/${user}
-            - user:
-              Ref: QuickSightUser
+        - Principal:
+            Fn::Join:
+              - !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/
+              - Ref: QuickSightUser
           Actions:
             - quicksight:ListThemeVersions
             - quicksight:UpdateThemeAlias

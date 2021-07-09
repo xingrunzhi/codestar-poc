@@ -48,10 +48,10 @@ Resources:
           Port:
             Ref: DataSourcePort
       Permissions:
-        - Principal: !Sub
-            - arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/${user}
-            - user:
-              Ref: QuickSightUser
+        - Principal:
+            Fn::Join:
+              - !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/
+              - Ref: QuickSightUser
           Actions:
             - quicksight:UpdateDataSourcePermissions
             - quicksight:DescribeDataSource
