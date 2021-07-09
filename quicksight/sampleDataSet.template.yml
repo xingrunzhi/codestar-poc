@@ -27,7 +27,8 @@ Resources:
       Permissions:
         - Principal: !Sub
             - arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/${user}
-            - { user: !Ref: QuickSightUser }
+            - user:
+              Ref: QuickSightUser
           Actions:
             - quicksight:UpdateDataSetPermissions
             - quicksight:DescribeDataSet
