@@ -15,6 +15,8 @@ Parameters:
     Type: Number
   DataSourceVpcConnectionArn:
     Type: String
+  QuickSightUser:
+    Type: String
 
 Outputs:
   SampleDataSourceArn:
@@ -46,7 +48,9 @@ Resources:
           Port:
             Ref: DataSourcePort
       Permissions:
-        - Principal: !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:namespace/default
+        - Principal: !Sub
+            - arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/${user}
+            - { user: !Ref: QuickSightUser }
           Actions:
             - quicksight:UpdateDataSourcePermissions
             - quicksight:DescribeDataSource

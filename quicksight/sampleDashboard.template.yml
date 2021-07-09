@@ -9,6 +9,8 @@ Parameters:
     Type: String
   DataSetArn:
     Type: String
+  QuickSightUser:
+    Type: String
 
 Resources:
   SampleDashboard:
@@ -19,7 +21,9 @@ Resources:
       DashboardId: 'xrunzhi-sample-dashboard-id-v3'
       Name: 'xrunzhi-sample-dashboard-name-v3'
       Permissions:
-        - Principal: !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:namespace/default
+        - Principal: !Sub
+          - arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/${user}
+          - { user: !Ref: QuickSightUser }
           Actions:
             - quicksight:DescribeDashboard
             - quicksight:ListDashboardVersions

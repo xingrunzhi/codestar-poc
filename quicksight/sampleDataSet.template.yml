@@ -5,6 +5,8 @@ Transform: AWS::Serverless-2016-10-31
 Parameters:
   SampleDataSourceArn:
     Type: String
+  QuickSightUser:
+    Type: String
 
 Outputs:
   SampleDataSetArn:
@@ -23,7 +25,9 @@ Resources:
       Name: 'sample-dataset-name-3'
       ImportMode: SPICE
       Permissions:
-        - Principal: !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:namespace/default
+        - Principal: !Sub
+            - arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/${user}
+            - { user: !Ref: QuickSightUser }
           Actions:
             - quicksight:UpdateDataSetPermissions
             - quicksight:DescribeDataSet

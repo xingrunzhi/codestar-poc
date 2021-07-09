@@ -2,6 +2,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
+Parameters:
+  QuickSightUser:
+    Type: String
+
 Outputs:
   SampleTemplateArn:
     Value:
@@ -21,11 +25,13 @@ Resources:
         SourceTemplate:
           Arn: 'arn:aws:quicksight:us-east-2:266266396604:template/inventory-dataset-placeholder-id'
       Permissions:
-        - Principal: !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:namespace/default
+        - Principal: !Sub
+            - arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/${user}
+            - { user: !Ref: QuickSightUser }
           Actions:
-            - "quicksight:CreateTemplate"
-            - "quicksight:DescribeTemplate"
-            - "quicksight:ListTemplates"
-            - "quicksight:DescribeTemplatePermissions"
-            - "quicksight:DeleteTemplate"
-            - "quicksight:UpdateTemplate"
+            - quicksight:CreateTemplate
+            - quicksight:DescribeTemplate
+            - quicksight:ListTemplates
+            - quicksight:DescribeTemplatePermissions
+            - quicksight:DeleteTemplate
+            - quicksight:UpdateTemplate

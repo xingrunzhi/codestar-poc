@@ -21,6 +21,9 @@ Parameters:
   Stage:
     Type: String
     Default: 'DEV'
+  QuickSightUser:
+    Type: String
+    Default: 'xrunzhi-Isengard'
 
 Mappings:
   DataSourcesConfiguration:
@@ -38,6 +41,9 @@ Resources:
     DeletionPolicy: Delete
     UpdateReplacePolicy: Retain
     Properties:
+      Parameters:
+        QuickSightUser:
+          Ref: QuickSightUser
       TemplateURL:
         Fn::Join:
           - /
@@ -51,6 +57,8 @@ Resources:
     UpdateReplacePolicy: Retain
     Properties:
       Parameters:
+        QuickSightUser:
+          Ref: QuickSightUser
         DataSourceUsername:
           Fn::FindInMap:
           - DataSourcesConfiguration
@@ -95,6 +103,8 @@ Resources:
     UpdateReplacePolicy: Retain
     Properties:
       Parameters:
+        QuickSightUser:
+          Ref: QuickSightUser
         SampleDataSourceArn:
           Fn::GetAtt:
             - QSDataSourceStack
@@ -111,6 +121,9 @@ Resources:
     DeletionPolicy: Delete
     UpdateReplacePolicy: Retain
     Properties:
+      Parameters:
+        QuickSightUser:
+          Ref: QuickSightUser
       TemplateURL:
         Fn::Join:
           - /
@@ -130,6 +143,8 @@ Resources:
     UpdateReplacePolicy: Retain
     Properties:
       Parameters:
+        QuickSightUser:
+          Ref: QuickSightUser
         TemplateArn:
           Fn::GetAtt:
             - QSTemplateStack
@@ -156,6 +171,8 @@ Resources:
     UpdateReplacePolicy: Retain
     Properties:
       Parameters:
+        QuickSightUser:
+          Ref: QuickSightUser
         TemplateArn:
           Fn::GetAtt:
             - QSTemplateStack
