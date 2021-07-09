@@ -22,10 +22,10 @@ Resources:
       Name: 'xrunzhi-sample-dashboard-name-v3'
       Permissions:
         - Principal:
-            Fn::Join:
-              - ''
-              - - !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/
-                - Ref: QuickSightUser
+            Fn::Sub:
+              - arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/${username}
+              - username:
+                  Ref: QuickSightUser
           Actions:
             - quicksight:DescribeDashboard
             - quicksight:ListDashboardVersions

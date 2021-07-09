@@ -28,7 +28,7 @@ Parameters:
 Mappings:
   DataSourcesConfiguration:
     DEV:
-      DataSourceVpcConnectionArn: arn:aws:quicksight:us-east-1:888519273200:vpcConnection/DefaultVpcConnection
+      DataSourceVpcConnectionArn: DefaultVpcConnection
       DataSourcePort: 5432
       DataSourceHost: devportal-cluster.cluster-cufe1iwohaxm.us-east-1.rds.amazonaws.com
       DataSourceDatabase: session_state_store

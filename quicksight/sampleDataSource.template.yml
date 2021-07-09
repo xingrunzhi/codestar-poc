@@ -49,10 +49,10 @@ Resources:
             Ref: DataSourcePort
       Permissions:
         - Principal:
-            Fn::Join:
-              - ''
-              - - !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/
-                - Ref: QuickSightUser
+            Fn::Sub:
+              - arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/${username}
+              - username:
+                  Ref: QuickSightUser
           Actions:
             - quicksight:UpdateDataSourcePermissions
             - quicksight:DescribeDataSource
@@ -63,4 +63,7 @@ Resources:
       Type: AURORA_POSTGRESQL
       VpcConnectionProperties: 
         VpcConnectionArn:
-          Ref: DataSourceVpcConnectionArn
+          Fn::Sub:
+            - arn:aws:quicksight:us-east-1:${AWS::AccountId}:vpcConnection/${vpcconnection}
+            - vpcconnection:
+                Ref: DataSourceVpcConnectionArn

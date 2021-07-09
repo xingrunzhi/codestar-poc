@@ -29,10 +29,10 @@ Resources:
               #DataSetArn: !Sub 'arn:aws:quicksight:us-east-1:${AWS::AccountId}:dataset/926a5dbb-deea-4ea5-b2be-7ef7655cf247'
       Permissions:
         - Principal:
-            Fn::Join:
-              - ''
-              - - !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/
-                - Ref: QuickSightUser
+            Fn::Sub:
+              - arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/${username}
+              - username:
+                  Ref: QuickSightUser
           Actions:
             - quicksight:RestoreAnalysis
             - quicksight:UpdateAnalysisPermissions
