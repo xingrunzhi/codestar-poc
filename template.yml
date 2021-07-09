@@ -23,7 +23,7 @@ Parameters:
     Default: 'DEV'
   QuickSightUser:
     Type: String
-    Default: 'xrunzhi-Isengard'
+    Default: 'Admin/xrunzhi-Isengard'
 
 Mappings:
   DataSourcesConfiguration:

@@ -24,7 +24,7 @@ Resources:
         - Principal:
             Fn::Join:
               - ''
-              - - !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/Admin/
+              - - !Sub arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/
                 - Ref: QuickSightUser
           Actions:
             - quicksight:DescribeDashboard
