@@ -28,12 +28,15 @@ Parameters:
 Mappings:
   DataSourcesConfiguration:
     DEV:
-      DataSourceVpcConnectionArn: arn:aws:quicksight:us-east-1:888519273200:vpcConnection/DefaultVpcConnection
+      DataSourceVpcConnectionArn: !Sub arn:aws:quicksight:us-east-1:${AWS::AccountId}:vpcConnection/DefaultVpcConnection
       DataSourcePort: 5432
       DataSourceHost: devportal-cluster.cluster-cufe1iwohaxm.us-east-1.rds.amazonaws.com
       DataSourceDatabase: session_state_store
       DataSourcePassword: abc123!@#
       DataSourceUsername: xrunzhi
+  DashaboardConfiguration:
+    DEV:
+      DataSetArn: !Sub arn:aws:quicksight:us-east-1:${AWS::AccountId}:dataset/926a5dbb-deea-4ea5-b2be-7ef7655cf247
 
 Resources:
   QSThemeStack:
@@ -154,9 +157,10 @@ Resources:
             - QSThemeStack
             - Outputs.SampleThemeArn
         DataSetArn:
-          Fn::GetAtt:
-            - QSDataSetStack
-            - Outputs.SampleDataSetArn
+          Fn::FindInMap:
+            - DashaboardConfiguration
+            - Ref: Stage
+            - DataSetArn
       TemplateURL:
         Fn::Join:
           - /
@@ -178,9 +182,10 @@ Resources:
             - QSTemplateStack
             - Outputs.SampleTemplateArn
         DataSetArn:
-          Fn::GetAtt:
-            - QSDataSetStack
-            - Outputs.SampleDataSetArn
+          Fn::FindInMap:
+            - DashaboardConfiguration
+            - Ref: Stage
+            - DataSetArn
       TemplateURL:
         Fn::Join:
           - /
