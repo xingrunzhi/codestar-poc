@@ -6,47 +6,28 @@ Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
-          default: "DataSource Configuration"
-        Parameters:
-          - DataSourceVpcConnectionArn
-          - DataSourceUsername
-          - DataSourcePassword
-          - DataSourceHost
-          - DataSourcePort
-          - DataSourceDatabase
-      - Label:
-          default: " configuration"
+          default: "Template configuration"
         Parameters:
           - BundleS3HttpsLocation
+          - Stage
     ParameterLabels:
-      DataSourceVpcConnectionArn:
-        default: "Which VPC connection should be used for data source"
       BundleS3HttpsLocation:
         default: "The https S3 location of where quicksight nested stacks are stored"
-
 
 Parameters:
   BundleS3HttpsLocation:
     Type: String
     Default: "https://quicksight-bundling-demo-888519273200.s3.amazonaws.com"
-  DataSourceUsername:
-    Type: String
-    Default: "xrunzhi"
-  DataSourcePassword:
-    Type: String
-    Default: "abc123!@#"
-  DataSourceDatabase:
-    Type: String
-    Default: "session_state_store"
-  DataSourceHost:
-    Type: String
-    Default: "devportal-cluster.cluster-cufe1iwohaxm.us-east-1.rds.amazonaws.com"
-  DataSourcePort:
-    Type: Number
-    Default: 5432
-  DataSourceVpcConnectionArn:
-    Type: String
-    Default: "arn:aws:quicksight:us-east-1:888519273200:vpcConnection/DefaultVpcConnection"
+
+Mappings:
+  DataSourcesConfiguration:
+    Dev:
+      DataSourceVpcConnectionArn: arn:aws:quicksight:us-east-1:888519273200:vpcConnection/DefaultVpcConnection
+      DataSourcePort: 5432
+      DataSourceHost: devportal-cluster.cluster-cufe1iwohaxm.us-east-1.rds.amazonaws.com
+      DataSourceDatabase: session_state_store
+      DataSourcePassword: abc123!@#
+      DataSourceUsername: xrunzhi
 
 Resources:
   QSThemeStack:
@@ -68,17 +49,35 @@ Resources:
     Properties:
       Parameters:
         DataSourceUsername:
-          Ref: DataSourceUsername
+          Fn::FindInMap:
+          - DataSourcesConfiguration
+          - Ref: Stage
+          - DataSourceUsername
         DataSourcePassword:
-          Ref: DataSourcePassword
+          Fn::FindInMap:
+          - DataSourcesConfiguration
+          - Ref: Stage
+          - DataSourcePassword
         DataSourceDatabase:
-          Ref: DataSourceDatabase
+          Fn::FindInMap:
+          - DataSourcesConfiguration
+          - Ref: Stage
+          - DataSourceDatabase
         DataSourceHost:
-          Ref: DataSourceHost
+          Fn::FindInMap:
+          - DataSourcesConfiguration
+          - Ref: Stage
+          - DataSourceHost
         DataSourcePort:
-          Ref: DataSourcePort
+          Fn::FindInMap:
+          - DataSourcesConfiguration
+          - Ref: Stage
+          - DataSourcePort
         DataSourceVpcConnectionArn:
-          Ref: DataSourceVpcConnectionArn
+          Fn::FindInMap:
+          - DataSourcesConfiguration
+          - Ref: Stage
+          - DataSourceVpcConnectionArn
       TemplateURL:
         Fn::Join:
           - /
@@ -136,6 +135,10 @@ Resources:
           Fn::GetAtt:
             - QSThemeStack
             - Outputs.SampleThemeArn
+        DataSetArn:
+          Fn::GetAtt:
+            - QSDataSetStack
+            - Outputs.SampleDataSetArn
       TemplateURL:
         Fn::Join:
           - /
@@ -154,6 +157,10 @@ Resources:
           Fn::GetAtt:
             - QSTemplateStack
             - Outputs.SampleTemplateArn
+        DataSetArn:
+          Fn::GetAtt:
+            - QSDataSetStack
+            - Outputs.SampleDataSetArn
       TemplateURL:
         Fn::Join:
           - /

@@ -60,7 +60,7 @@ Resources:
       ThemeId: 'xrunzhi-sample-theme-id-v3'
       Name: 'xrunzhi-sample-theme-name-v3'
       Permissions:
-        - Principal: arn:aws:quicksight:us-east-1:888519273200:user/default/Admin/xrunzhi-Isengard
+        - Principal: !Sub arn:aws:quicksight:us-east-1:${AWS::AccountId}:user/default/*
           Actions:
             - quicksight:ListThemeVersions
             - quicksight:UpdateThemeAlias
