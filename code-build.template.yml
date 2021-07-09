@@ -19,6 +19,12 @@ Metadata:
   ProjectTemplateId: webapp-nodeweb-lambda
   WebsiteS3Bucket: !Ref 'WebsiteS3Bucket'
 Parameters:
+  ProductionAccount:
+    Type: Number
+    Default: 233949254881
+  TestAccount:
+    Type: Number
+    Default: 773697115511
   CodeS3Bucket:
     Default: ''
     NoEcho: true
@@ -28,14 +34,14 @@ Parameters:
     NoEcho: true
     Type: String
   ConnectionArn:
-    Default: ''
+    Default: 'arn:aws:codestar-connections:us-east-1:888519273200:connection/83e2bc17-7a8a-4076-936b-78d413b5bc2d'
     Description: CodeStar Connections ConnectionArn for GitHub
     Type: String
   EnableIssues:
     AllowedValues:
     - true
     - false
-    Default: false
+    Default: true
     Type: String
   IsPrivate:
     AllowedValues:
@@ -50,6 +56,7 @@ Parameters:
     MaxLength: 15
     MinLength: 2
     Type: String
+    Default: 'codestar-poc'
   RepositoryBranch:
     Default: master
     Description: GitHub branch name.
@@ -63,10 +70,78 @@ Parameters:
     MaxLength: 100
     MinLength: 1
     Type: String
+    Default: 'codestar-poc'
   RepositoryProviderUsername:
     Description: GitHub user name.
     Type: String
+    Default: 'xingrunzhi'
 Resources:
+  CodeDeployTrustRole:
+    DeletionPolicy: Retain
+    Description: The service role to be created in IAM for AWS CodeDeploy
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - codedeploy.amazonaws.com
+      ManagedPolicyArns:
+      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSCodeDeployRoleForLambda'
+      Path: /
+      RoleName: !Sub 'CodeStarWorker-${ProjectId}-CodeDeploy'
+    Type: AWS::IAM::Role
+  ToolChainRole:
+    DeletionPolicy: Retain
+    Description: Creating toolchain role in IAM for Amazon EC2 instances
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - codebuild.amazonaws.com
+            - codedeploy.amazonaws.com
+            - codepipeline.amazonaws.com
+            - codestar.amazonaws.com
+            - elasticbeanstalk.amazonaws.com
+            - events.amazonaws.com
+            - lambda.amazonaws.com
+        - Action: sts:AssumeRole
+          Effect: Allow
+          Principal:
+            AWS:
+              - Ref: ProductionAccount
+              - Ref: TestAccount
+      ManagedPolicyArns:
+      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AdministratorAccess-AWSElasticBeanstalk'
+      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonS3FullAccess'
+      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AWSCodeBuildAdminAccess'
+      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AWSCodeCommitFullAccess'
+      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AWSCodeDeployFullAccess'
+      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AWSCodePipeline_FullAccess'
+      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AWSCodeStarFullAccess'
+      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AWSLambda_FullAccess'
+      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/CloudWatchEventsFullAccess'
+      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/CloudWatchLogsFullAccess'
+      Path: /
+      Policies:
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - kms:*
+            - codestar-connections:UseConnection
+            - codestar-connections:GetConnection
+            - iam:PassRole
+            - cloudformation:CreateChangeSet
+            - cloudformation:ExecuteChangeSet
+            Effect: Allow
+            Resource: '*'
+        PolicyName: ToolChainWorkerPolicy
+      RoleName: !Sub 'CodeStarWorker-${ProjectId}-ToolChain'
+    Type: AWS::IAM::Role
   CloudFormationTrustRole:
     DeletionPolicy: Retain
     Description: Creating service role in IAM for AWS CloudFormation
@@ -85,11 +160,11 @@ Resources:
           - Action:
             - s3:*
             Effect: Allow
-            Resource: *
+            Resource: '*'
           - Action:
             - quicksight:*
             Effect: Allow
-            Resource: *
+            Resource: '*'
           - Action:
             - apigateway:DELETE
             - apigateway:GET
@@ -97,7 +172,7 @@ Resources:
             - apigateway:POST
             - apigateway:PUT
             Effect: Allow
-            Resource: *
+            Resource: '*'
           - Action:
             - codedeploy:CreateApplication
             - codedeploy:CreateDeployment
@@ -112,7 +187,7 @@ Resources:
             - codedeploy:GetDeploymentGroup
             - codedeploy:RegisterApplicationRevision
             Effect: Allow
-            Resource: *
+            Resource: '*'
           - Action:
             - dynamodb:CreateTable
             - dynamodb:DeleteTable
@@ -126,7 +201,7 @@ Resources:
             - dynamodb:UpdateTable
             - dynamodb:UpdateTimeToLive
             Effect: Allow
-            Resource: *
+            Resource: '*'
           - Action:
             - config:DeleteConfigRule
             - config:DescribeConfigRules
@@ -135,7 +210,7 @@ Resources:
             - config:TagResource
             - config:UntagResource
             Effect: Allow
-            Resource: *
+            Resource: '*'
           - Action:
             - ec2:AssociateIamInstanceProfile
             - ec2:AttachVolume
@@ -157,7 +232,7 @@ Resources:
             - ec2:StopInstances
             - ec2:TerminateInstances
             Effect: Allow
-            Resource: *
+            Resource: '*'
           - Action:
             - events:DeleteRule
             - events:DescribeRule
@@ -168,7 +243,7 @@ Resources:
             - events:TagResource
             - events:UntagResource
             Effect: Allow
-            Resource: *
+            Resource: '*'
           - Action:
             - kinesis:AddTagsToStream
             - kinesis:CreateStream
@@ -181,7 +256,7 @@ Resources:
             - kinesis:StopStreamEncryption
             - kinesis:UpdateShardCount
             Effect: Allow
-            Resource: *
+            Resource: '*'
           - Action:
             - lambda:CreateAlias
             - lambda:CreateFunction
@@ -200,7 +275,7 @@ Resources:
             - lambda:UpdateFunctionCode
             - lambda:UpdateFunctionConfiguration
             Effect: Allow
-            Resource: *
+            Resource: '*'
           - Action:
             - sns:CreateTopic
             - sns:DeleteTopic
@@ -211,7 +286,7 @@ Resources:
             - sns:Subscribe
             - sns:Unsubscribe
             Effect: Allow
-            Resource: *
+            Resource: '*'
           - Action:
             - sqs:CreateQueue
             - sqs:DeleteQueue
@@ -221,7 +296,7 @@ Resources:
             - sqs:TagQueue
             - sqs:UntagQueue
             Effect: Allow
-            Resource: *
+            Resource: '*'
           - Action:
             - codestar:SyncResources
             Effect: Allow
@@ -310,6 +385,9 @@ Resources:
       Artifacts:
         Packaging: zip
         Type: codepipeline
+      EncryptionKey: !GetAtt
+      - KMSKey
+      - Arn
       Description: !Join
       - ''
       - - 'AWS CodeStar created CodeBuild Project for '
@@ -345,22 +423,6 @@ Resources:
       Source:
         Type: codepipeline
     Type: AWS::CodeBuild::Project
-  CodeDeployTrustRole:
-    DeletionPolicy: Retain
-    Description: The service role to be created in IAM for AWS CodeDeploy
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-        - Action: sts:AssumeRole
-          Effect: Allow
-          Principal:
-            Service:
-            - codedeploy.amazonaws.com
-      ManagedPolicyArns:
-      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSCodeDeployRoleForLambda'
-      Path: /
-      RoleName: !Sub 'CodeStarWorker-${ProjectId}-CodeDeploy'
-    Type: AWS::IAM::Role
   GitHubRepo:
     DeletionPolicy: Retain
     Description: GitHub repository for application source code
@@ -461,6 +523,11 @@ Resources:
       ArtifactStore:
         Location: !Ref 'S3Bucket'
         Type: S3
+        EncryptionKey:
+          Id: !GetAtt
+          - KMSKey
+          - Arn
+          Type: KMS
       Name: !Sub '${ProjectId}-Pipeline'
       RoleArn: !GetAtt
       - ToolChainRole
@@ -477,8 +544,7 @@ Resources:
             ConnectionArn: !Ref 'ConnectionArn'
             FullRepositoryId: !Sub '${RepositoryProviderUsername}/${RepositoryName}'
             OutputArtifactFormat: CODE_ZIP
-          InputArtifacts: [
-            ]
+          InputArtifacts: []
           Name: ApplicationSource
           OutputArtifacts:
           - Name: !Sub '${ProjectId}-SourceArtifact'
@@ -507,20 +573,16 @@ Resources:
             Version: 1
           Configuration:
             ActionMode: CHANGE_SET_REPLACE
-            Capabilities: CAPABILITY_NAMED_IAM
+            Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
             ChangeSetName: pipeline-changeset
-            ParameterOverrides: !Sub '{"ProjectId":"${ProjectId}", "CodeDeployRole":"${CodeDeployTrustRole.Arn}"}'
-            RoleArn: !GetAtt
-            - CloudFormationTrustRole
-            - Arn
+            RoleArn: !GetAtt CloudFormationTrustRole.Arn
             StackName: !Sub 'awscodestar-${ProjectId}-infrastructure'
             TemplateConfiguration: !Sub '${ProjectId}-BuildArtifact::template-configuration.json'
             TemplatePath: !Sub '${ProjectId}-BuildArtifact::template-export.yml'
           InputArtifacts:
           - Name: !Sub '${ProjectId}-BuildArtifact'
           Name: GenerateChangeSet
-          OutputArtifacts: [
-            ]
+          OutputArtifacts: []
           RunOrder: 1
         - ActionTypeId:
             Category: Deploy
@@ -531,13 +593,49 @@ Resources:
             ActionMode: CHANGE_SET_EXECUTE
             ChangeSetName: pipeline-changeset
             StackName: !Sub 'awscodestar-${ProjectId}-infrastructure'
-          InputArtifacts: [
-            ]
+          InputArtifacts: []
           Name: ExecuteChangeSet
-          OutputArtifacts: [
-            ]
+          OutputArtifacts: []
           RunOrder: 2
-        Name: Deploy
+        Name: DeployToDev
+      - Actions:
+        - ActionTypeId:
+            Category: Deploy
+            Owner: AWS
+            Provider: CloudFormation
+            Version: 1
+          Configuration:
+            ActionMode: CHANGE_SET_REPLACE
+            Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
+            ChangeSetName: pipeline-changeset
+            RoleArn:
+              arn:aws:iam::773697115511:role/cloudformationdeployer-role
+            StackName: !Sub 'awscodestar-${ProjectId}-infrastructure'
+            TemplateConfiguration: !Sub '${ProjectId}-BuildArtifact::template-configuration.json'
+            TemplatePath: !Sub '${ProjectId}-BuildArtifact::template-export.yml'
+          InputArtifacts:
+          - Name: !Sub '${ProjectId}-BuildArtifact'
+          Name: GenerateChangeSet
+          OutputArtifacts: []
+          RunOrder: 1
+          RoleArn: arn:aws:iam::773697115511:role/ToolsAcctCodePipelineCloudFormationRole
+        - ActionTypeId:
+            Category: Deploy
+            Owner: AWS
+            Provider: CloudFormation
+            Version: 1
+          Configuration:
+            ActionMode: CHANGE_SET_EXECUTE
+            ChangeSetName: pipeline-changeset
+            StackName: !Sub 'awscodestar-${ProjectId}-infrastructure'
+            RoleArn:
+              arn:aws:iam::773697115511:role/cloudformationdeployer-role
+          InputArtifacts: []
+          Name: ExecuteChangeSet
+          OutputArtifacts: []
+          RunOrder: 2
+          RoleArn: arn:aws:iam::773697115511:role/ToolsAcctCodePipelineCloudFormationRole
+        Name: DeployToTest
     Type: AWS::CodePipeline::Pipeline
   S3ArtifactBucketPolicy:
     Description: Setting Amazon S3 bucket policy for AWS CodePipeline access
@@ -546,6 +644,18 @@ Resources:
       PolicyDocument:
         Id: SSEAndSSLPolicy
         Statement:
+        - Action:
+          - s3:ListBucket
+          - s3:Get*
+          - s3:Put*
+          Effect: Allow
+          Principal:
+            AWS:
+              - Ref: ProductionAccount
+              - Ref: TestAccount
+          Resource:
+          - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}'
+          - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}/*'
         - Action:
           - s3:GetObject
           - s3:GetObjectVersion
@@ -567,12 +677,15 @@ Resources:
           - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}/*'
           Sid: WhitelistedGet
         - Action:
-          - s3:PutObject
+          - s3:*
           Effect: Allow
           Principal:
             AWS:
             - !GetAtt
               - ToolChainRole
+              - Arn
+            - !GetAtt
+              - CloudFormationTrustRole
               - Arn
           Resource:
           - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}'
@@ -601,53 +714,6 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
     Type: AWS::S3::Bucket
-  ToolChainRole:
-    DeletionPolicy: Retain
-    Description: Creating toolchain role in IAM for Amazon EC2 instances
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-        - Action: sts:AssumeRole
-          Effect: Allow
-          Principal:
-            Service:
-            - codebuild.amazonaws.com
-            - codedeploy.amazonaws.com
-            - codepipeline.amazonaws.com
-            - codestar.amazonaws.com
-            - elasticbeanstalk.amazonaws.com
-            - events.amazonaws.com
-            - lambda.amazonaws.com
-      ManagedPolicyArns:
-      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AdministratorAccess-AWSElasticBeanstalk'
-      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonS3FullAccess'
-      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AWSCodeBuildAdminAccess'
-      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AWSCodeCommitFullAccess'
-      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AWSCodeDeployFullAccess'
-      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AWSCodePipeline_FullAccess'
-      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AWSCodeStarFullAccess'
-      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AWSLambda_FullAccess'
-      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/CloudWatchEventsFullAccess'
-      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/CloudWatchLogsFullAccess'
-      Path: /
-      PermissionsBoundary: !Ref 'PermissionsBoundaryPolicy'
-      Policies:
-      - PolicyDocument:
-          Statement:
-          - Action:
-            - kms:GenerateDataKey*
-            - kms:Encrypt
-            - kms:Decrypt
-            - codestar-connections:UseConnection
-            - codestar-connections:GetConnection
-            - iam:PassRole
-            - cloudformation:CreateChangeSet
-            - cloudformation:ExecuteChangeSet
-            Effect: Allow
-            Resource: '*'
-        PolicyName: ToolChainWorkerPolicy
-      RoleName: !Sub 'CodeStarWorker-${ProjectId}-ToolChain'
-    Type: AWS::IAM::Role
   WebsiteS3Bucket:
     Condition: CreateWebSiteS3Bucket
     DeletionPolicy: Retain
@@ -660,3 +726,36 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
     Type: AWS::S3::Bucket
+  KMSKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: Used by Assumed Roles in Dev/Test/Prod accounts to Encrypt/Decrypt code
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: "2012-10-17"
+        Id: !Ref AWS::StackName
+        Statement:
+          -
+            Sid: Allows admin of the key
+            Effect: Allow
+            Principal:
+              AWS:
+                Ref: AWS::AccountId
+            Action:
+              - kms:*
+            Resource: "*"
+          -
+            Sid: Allow use of the key for CryptoGraphy Lambda
+            Effect: Allow
+            Principal:
+              AWS:
+                - Ref: ProductionAccount
+                - Ref: TestAccount
+            Action:
+              - kms:*
+            Resource: "*"
+  KMSAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub alias/codepipeline-crossaccounts
+      TargetKeyId: !Ref KMSKey
