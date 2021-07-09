@@ -34,9 +34,18 @@ Mappings:
       DataSourceDatabase: session_state_store
       DataSourcePassword: abc123!@#
       DataSourceUsername: xrunzhi
+    TEST:
+      DataSourceVpcConnectionArn: TestDefaultVpcConnection
+      DataSourcePort: 5432
+      DataSourceHost: devportal-cluster.cluster-con0o5hzzinq.us-east-1.rds.amazonaws.com
+      DataSourceDatabase: session_state_store
+      DataSourcePassword: 12345abcde
+      DataSourceUsername: testuser
   DashaboardConfiguration:
     DEV:
       DataSetArn: arn:aws:quicksight:us-east-1:888519273200:dataset/926a5dbb-deea-4ea5-b2be-7ef7655cf247
+    TEST:
+      DataSetArn: arn:aws:quicksight:us-east-1:773697115511:dataset/e38efbd4-980f-4465-81f2-87aaa00b4b88
 
 Resources:
   QSThemeStack:

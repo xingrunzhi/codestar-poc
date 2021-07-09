@@ -611,7 +611,7 @@ Resources:
             RoleArn:
               arn:aws:iam::773697115511:role/cloudformationdeployer-role
             StackName: !Sub 'awscodestar-${ProjectId}-infrastructure'
-            ParameterOverrides: !Sub '{"QuickSightUser":"IibsAdminAccess-DO-NOT-DELETE/AMSPortalWebsite+P-xrunzhi"}'
+            ParameterOverrides: !Sub '{"QuickSightUser":"IibsAdminAccess-DO-NOT-DELETE/AMSPortalWebsite+P-xrunzhi","Stage":"TEST"}'
             TemplateConfiguration: !Sub '${ProjectId}-BuildArtifact::template-configuration.json'
             TemplatePath: !Sub '${ProjectId}-BuildArtifact::template-export.yml'
           InputArtifacts:
