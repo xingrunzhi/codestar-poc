@@ -18,10 +18,13 @@ Parameters:
   BundleS3HttpsLocation:
     Type: String
     Default: "https://quicksight-bundling-demo-888519273200.s3.amazonaws.com"
+  Stage:
+    Type: String
+    Default: 'DEV'
 
 Mappings:
   DataSourcesConfiguration:
-    Dev:
+    DEV:
       DataSourceVpcConnectionArn: arn:aws:quicksight:us-east-1:888519273200:vpcConnection/DefaultVpcConnection
       DataSourcePort: 5432
       DataSourceHost: devportal-cluster.cluster-cufe1iwohaxm.us-east-1.rds.amazonaws.com
