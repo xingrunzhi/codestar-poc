@@ -637,6 +637,45 @@ Resources:
           RunOrder: 2
           RoleArn: arn:aws:iam::773697115511:role/ToolsAcctCodePipelineCloudFormationRole
         Name: DeployToTest
+      - Actions:
+        - ActionTypeId:
+            Category: Deploy
+            Owner: AWS
+            Provider: CloudFormation
+            Version: 1
+          Configuration:
+            ActionMode: CHANGE_SET_REPLACE
+            Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
+            ChangeSetName: pipeline-changeset
+            RoleArn:
+              arn:aws:iam::233949254881:role/cloudformationdeployer-role
+            StackName: !Sub 'Prod-${ProjectId}-infrastructure'
+            ParameterOverrides: !Sub '{"QuickSightUser":"IibsAdminAccess-DO-NOT-DELETE/AMSPortalWebsite+P-xrunzhi","Stage":"PROD"}'
+            TemplateConfiguration: !Sub '${ProjectId}-BuildArtifact::template-configuration.json'
+            TemplatePath: !Sub '${ProjectId}-BuildArtifact::template-export.yml'
+          InputArtifacts:
+          - Name: !Sub '${ProjectId}-BuildArtifact'
+          Name: GenerateChangeSet
+          OutputArtifacts: []
+          RunOrder: 1
+          RoleArn: arn:aws:iam::233949254881:role/ToolsAcctCodePipelineCloudFormationRole
+        - ActionTypeId:
+            Category: Deploy
+            Owner: AWS
+            Provider: CloudFormation
+            Version: 1
+          Configuration:
+            ActionMode: CHANGE_SET_EXECUTE
+            ChangeSetName: pipeline-changeset
+            StackName: !Sub 'awscodestar-${ProjectId}-infrastructure'
+            RoleArn:
+              arn:aws:iam::233949254881:role/cloudformationdeployer-role
+          InputArtifacts: []
+          Name: ExecuteChangeSet
+          OutputArtifacts: []
+          RunOrder: 2
+          RoleArn: arn:aws:iam::233949254881:role/ToolsAcctCodePipelineCloudFormationRole
+        Name: DeployToProd
     Type: AWS::CodePipeline::Pipeline
   S3ArtifactBucketPolicy:
     Description: Setting Amazon S3 bucket policy for AWS CodePipeline access
