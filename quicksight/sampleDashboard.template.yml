@@ -19,7 +19,7 @@ Resources:
       AwsAccountId:
         Ref: AWS::AccountId
       DashboardId: 'xrunzhi-sample-dashboard-id-v3'
-      Name: 'xrunzhi-sample-dashboard-name-v3'
+      Name: 'test-dashboard-2021-07'
       Permissions:
         - Principal:
             Fn::Sub:
