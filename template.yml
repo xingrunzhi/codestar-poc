@@ -52,9 +52,9 @@ Mappings:
     DEV:
       DataSetArn: arn:aws:quicksight:us-east-1:888519273200:dataset/926a5dbb-deea-4ea5-b2be-7ef7655cf247
     TEST:
-      DataSetArn: arn:aws:quicksight:us-east-1:773697115511:dataset/e38efbd4-980f-4465-81f2-87aaa00b4b88
+      DataSetArn: arn:aws:quicksight:us-east-1:137827098867:dataset/bbd54445-8479-4260-bb05-ef5586f43f94
     PROD:
-      DataSetArn: arn:aws:quicksight:us-east-1:233949254881:dataset/702001f3-0785-4da3-939b-458f244c0ac2
+      DataSetArn: arn:aws:quicksight:us-east-1:409504645323:dataset/a580755d-0864-4985-88f0-c01f8b4384f5
 
 Resources:
   QSThemeStack:
