@@ -37,14 +37,14 @@ Mappings:
     TEST:
       DataSourceVpcConnectionArn: TestDefaultVpcConnection
       DataSourcePort: 5432
-      DataSourceHost: devportal-cluster.cluster-con0o5hzzinq.us-east-1.rds.amazonaws.com
+      DataSourceHost: devportal-cluster.cluster-cjegpk6anfws.us-east-1.rds.amazonaws.com 
       DataSourceDatabase: session_state_store
       DataSourcePassword: 12345abcde
       DataSourceUsername: testuser
     PROD:
       DataSourceVpcConnectionArn: ProdVpc
       DataSourcePort: 5432
-      DataSourceHost: devportal-cluster.cluster-cfbd0nla6geh.us-east-1.rds.amazonaws.com
+      DataSourceHost: devportal-cluster.cluster-clhrmszygpjq.us-east-1.rds.amazonaws.com
       DataSourceDatabase: session_state_store
       DataSourcePassword: produsersample123
       DataSourceUsername: produser
