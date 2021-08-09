@@ -21,10 +21,10 @@ Metadata:
 Parameters:
   ProductionAccount:
     Type: Number
-    Default: 233949254881
+    Default: 827082787819
   TestAccount:
     Type: Number
-    Default: 773697115511
+    Default: 996044087377
   CodeS3Bucket:
     Default: ''
     NoEcho: true
@@ -135,8 +135,7 @@ Resources:
             - codestar-connections:UseConnection
             - codestar-connections:GetConnection
             - iam:PassRole
-            - cloudformation:CreateChangeSet
-            - cloudformation:ExecuteChangeSet
+            - cloudformation:*
             Effect: Allow
             Resource: '*'
         PolicyName: ToolChainWorkerPolicy
@@ -324,7 +323,7 @@ Resources:
               - CodeDeployTrustRole
               - Arn
           - Action:
-            - cloudformation:CreateChangeSet
+            - cloudformation:*
             Effect: Allow
             Resource:
             - !Sub 'arn:${AWS::Partition}:cloudformation:${AWS::Region}:aws:transform/Serverless-2016-10-31'
@@ -609,7 +608,7 @@ Resources:
             Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
             ChangeSetName: pipeline-changeset
             RoleArn:
-              arn:aws:iam::773697115511:role/cloudformationdeployer-role
+              !Sub 'arn:aws:iam::${TestAccount}:role/cloudformationdeployer-role'
             StackName: !Sub 'awscodestar-${ProjectId}-infrastructure'
             ParameterOverrides: !Sub '{"QuickSightUser":"IibsAdminAccess-DO-NOT-DELETE/AMSPortalWebsite+P-xrunzhi","Stage":"TEST"}'
             TemplateConfiguration: !Sub '${ProjectId}-BuildArtifact::template-configuration.json'
@@ -619,7 +618,7 @@ Resources:
           Name: GenerateChangeSet
           OutputArtifacts: []
           RunOrder: 1
-          RoleArn: arn:aws:iam::773697115511:role/ToolsAcctCodePipelineCloudFormationRole
+          RoleArn: !Sub 'arn:aws:iam::${TestAccount}:role/ToolsAcctCodePipelineCloudFormationRole'
         - ActionTypeId:
             Category: Deploy
             Owner: AWS
@@ -630,12 +629,12 @@ Resources:
             ChangeSetName: pipeline-changeset
             StackName: !Sub 'awscodestar-${ProjectId}-infrastructure'
             RoleArn:
-              arn:aws:iam::773697115511:role/cloudformationdeployer-role
+              !Sub 'arn:aws:iam::${TestAccount}:role/cloudformationdeployer-role'
           InputArtifacts: []
           Name: ExecuteChangeSet
           OutputArtifacts: []
           RunOrder: 2
-          RoleArn: arn:aws:iam::773697115511:role/ToolsAcctCodePipelineCloudFormationRole
+          RoleArn: !Sub 'arn:aws:iam::${TestAccount}:role/ToolsAcctCodePipelineCloudFormationRole'
         Name: DeployToTest
       - Actions:
         - ActionTypeId:
@@ -648,7 +647,7 @@ Resources:
             Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
             ChangeSetName: pipeline-changeset
             RoleArn:
-              arn:aws:iam::233949254881:role/cloudformationdeployer-role
+              !Sub 'arn:aws:iam::${ProductionAccount}:role/cloudformationdeployer-role'
             StackName: !Sub 'Prod-${ProjectId}-infrastructure'
             ParameterOverrides: !Sub '{"QuickSightUser":"IibsAdminAccess-DO-NOT-DELETE/AMSPortalWebsite+P-xrunzhi","Stage":"PROD"}'
             TemplateConfiguration: !Sub '${ProjectId}-BuildArtifact::template-configuration.json'
@@ -658,7 +657,7 @@ Resources:
           Name: GenerateChangeSet
           OutputArtifacts: []
           RunOrder: 1
-          RoleArn: arn:aws:iam::233949254881:role/ToolsAcctCodePipelineCloudFormationRole
+          RoleArn: !Sub 'arn:aws:iam::${ProductionAccount}:role/ToolsAcctCodePipelineCloudFormationRole'
         - ActionTypeId:
             Category: Deploy
             Owner: AWS
@@ -669,12 +668,12 @@ Resources:
             ChangeSetName: pipeline-changeset
             StackName: !Sub 'awscodestar-${ProjectId}-infrastructure'
             RoleArn:
-              arn:aws:iam::233949254881:role/cloudformationdeployer-role
+              !Sub 'arn:aws:iam::${ProductionAccount}:role/cloudformationdeployer-role'
           InputArtifacts: []
           Name: ExecuteChangeSet
           OutputArtifacts: []
           RunOrder: 2
-          RoleArn: arn:aws:iam::233949254881:role/ToolsAcctCodePipelineCloudFormationRole
+          RoleArn: !Sub 'arn:aws:iam::${ProductionAccount}:role/ToolsAcctCodePipelineCloudFormationRole'
         Name: DeployToProd
     Type: AWS::CodePipeline::Pipeline
   S3ArtifactBucketPolicy:

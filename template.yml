@@ -35,26 +35,26 @@ Mappings:
       DataSourcePassword: abc123!@#
       DataSourceUsername: xrunzhi
     TEST:
-      DataSourceVpcConnectionArn: TestDefaultVpcConnection
+      DataSourceVpcConnectionArn: DefaultTestConnection
       DataSourcePort: 5432
-      DataSourceHost: devportal-cluster.cluster-cjegpk6anfws.us-east-1.rds.amazonaws.com 
+      DataSourceHost: devportal-cluster.cluster-cys61g8smssb.us-east-1.rds.amazonaws.com
       DataSourceDatabase: session_state_store
-      DataSourcePassword: 12345abcde
+      DataSourcePassword: abc123!@#
       DataSourceUsername: testuser
     PROD:
-      DataSourceVpcConnectionArn: ProdVpc
+      DataSourceVpcConnectionArn: DefaultProdConnection
       DataSourcePort: 5432
-      DataSourceHost: devportal-cluster.cluster-clhrmszygpjq.us-east-1.rds.amazonaws.com
+      DataSourceHost: devportal-cluster.cluster-clfm2rn5giqf.us-east-1.rds.amazonaws.com
       DataSourceDatabase: session_state_store
-      DataSourcePassword: produsersample123
+      DataSourcePassword: iop890*()
       DataSourceUsername: produser
   DashaboardConfiguration:
     DEV:
       DataSetArn: arn:aws:quicksight:us-east-1:888519273200:dataset/926a5dbb-deea-4ea5-b2be-7ef7655cf247
     TEST:
-      DataSetArn: arn:aws:quicksight:us-east-1:137827098867:dataset/bbd54445-8479-4260-bb05-ef5586f43f94
+      DataSetArn: arn:aws:quicksight:us-east-1:996044087377:dataset/5661e8ca-053c-4a65-9ce6-ee6b0a1e588c
     PROD:
-      DataSetArn: arn:aws:quicksight:us-east-1:409504645323:dataset/a580755d-0864-4985-88f0-c01f8b4384f5
+      DataSetArn: arn:aws:quicksight:us-east-1:827082787819:dataset/bf6b0815-cc14-42fa-aaad-ba306e531d7d
 
 Resources:
   QSThemeStack:

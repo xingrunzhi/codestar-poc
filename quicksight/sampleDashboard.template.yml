@@ -18,8 +18,8 @@ Resources:
     Properties:
       AwsAccountId:
         Ref: AWS::AccountId
-      DashboardId: 'xrunzhi-sample-dashboard-id-v3'
-      Name: 'test-dashboard-2021-07'
+      DashboardId: 'bundle-asset-sample-id-v3'
+      Name: 'bundle-asset-sample'
       Permissions:
         - Principal:
             Fn::Sub:
@@ -43,6 +43,5 @@ Resources:
             - DataSetPlaceholder: 'inventory-dataset-placeholder'
               DataSetArn:
                 Ref: DataSetArn
-              #DataSetArn: !Sub 'arn:aws:quicksight:us-east-1:${AWS::AccountId}:dataset/926a5dbb-deea-4ea5-b2be-7ef7655cf247'
       ThemeArn:
         Ref: ThemeArn

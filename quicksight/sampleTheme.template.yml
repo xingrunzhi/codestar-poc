@@ -61,8 +61,8 @@ Resources:
           SuccessForeground: '#FFFFFF'
           Warning: '#FF9900'
           WarningForeground: '#FFFFFF'
-      ThemeId: 'xrunzhi-sample-theme-id-v3'
-      Name: 'xrunzhi-sample-theme-name-v3'
+      ThemeId: 'bundle-asset-sample-id-v3'
+      Name: 'bundle-asset-sample-name-v3'
       Permissions:
         - Principal:
             Fn::Sub:

@@ -19,8 +19,8 @@ Resources:
     Properties:
       AwsAccountId:
         Ref: AWS::AccountId
-      TemplateId: 'xrunzhi-sample-template-id-v3'
-      Name: 'xrunzhi-sample-template-name-v3'
+      TemplateId: 'bundle-asset-sample-id-v3'
+      Name: 'bundle-asset-sample-name-v3'
       SourceEntity:
         SourceTemplate:
           Arn: 'arn:aws:quicksight:us-east-2:266266396604:template/inventory-dataset-placeholder-id'
