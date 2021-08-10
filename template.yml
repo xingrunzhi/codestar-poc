@@ -170,6 +170,14 @@ Resources:
           Fn::GetAtt:
             - QSTemplateStack
             - Outputs.SampleTemplateArn
+        SessionTemplateArn:
+          Fn::GetAtt:
+            - QSTemplateStack
+            - Outputs.SampleSessionTemplateArn
+        SessionDataSetArn:
+          Fn::GetAtt:
+            - QSDataSetStack
+            - Outputs.SampleDataSetArn
         ThemeArn:
           Fn::GetAtt:
             - QSThemeStack
@@ -204,6 +212,14 @@ Resources:
             - DashaboardConfiguration
             - Ref: Stage
             - DataSetArn
+        SessionTemplateArn:
+          Fn::GetAtt:
+            - QSTemplateStack
+            - Outputs.SampleSessionTemplateArn
+        SessionDataSetArn:
+          Fn::GetAtt:
+            - QSDataSetStack
+            - Outputs.SampleDataSetArn
       TemplateURL:
         Fn::Join:
           - /

@@ -9,6 +9,10 @@ Parameters:
     Type: String
   DataSetArn:
     Type: String
+  SessionDataSetArn:
+    Type: String
+  SessionTemplateArn:
+    Type: String
   QuickSightUser:
     Type: String
 
@@ -45,3 +49,33 @@ Resources:
                 Ref: DataSetArn
       ThemeArn:
         Ref: ThemeArn
+  SampleDashboardSession:
+    Type: AWS::QuickSight::Dashboard
+    Properties:
+      AwsAccountId:
+        Ref: AWS::AccountId
+      DashboardId: 'SessionSampleDashboard'
+      Name: 'SessionSampleDashboard'
+      Permissions:
+        - Principal:
+            Fn::Sub:
+              - arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/${username}
+              - username:
+                  Ref: QuickSightUser
+          Actions:
+            - quicksight:DescribeDashboard
+            - quicksight:ListDashboardVersions
+            - quicksight:UpdateDashboardPermissions
+            - quicksight:QueryDashboard
+            - quicksight:UpdateDashboard
+            - quicksight:DeleteDashboard
+            - quicksight:UpdateDashboardPublishedVersion
+            - quicksight:DescribeDashboardPermissions
+      SourceEntity:
+        SourceTemplate:
+          Arn:
+            Ref: SessionTemplateArn
+          DataSetReferences:
+            - DataSetPlaceholder: 'session-store'
+              DataSetArn:
+                Ref: SessionDataSetArn

@@ -12,6 +12,11 @@ Outputs:
       Fn::GetAtt:
         - SampleTemplate
         - Arn
+  SampleSessionTemplateArn:
+    Value:
+      Fn::GetAtt:
+        - SampleTemplateSession
+        - Arn
 
 Resources:
   SampleTemplate:
@@ -24,6 +29,29 @@ Resources:
       SourceEntity:
         SourceTemplate:
           Arn: 'arn:aws:quicksight:us-east-2:266266396604:template/inventory-dataset-placeholder-id'
+      Permissions:
+        - Principal:
+            Fn::Sub:
+              - arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/${username}
+              - username:
+                  Ref: QuickSightUser
+          Actions:
+            - quicksight:CreateTemplate
+            - quicksight:DescribeTemplate
+            - quicksight:ListTemplates
+            - quicksight:DescribeTemplatePermissions
+            - quicksight:DeleteTemplate
+            - quicksight:UpdateTemplate
+  SampleTemplateSession:
+    Type: AWS::QuickSight::Template
+    Properties:
+      AwsAccountId:
+        Ref: AWS::AccountId
+      TemplateId: 'SampleSessionTemplate'
+      Name: 'SampleSessionTemplate'
+      SourceEntity:
+        SourceTemplate:
+          Arn: 'arn:aws:quicksight:us-east-2:266266396604:template/session-sample-template'
       Permissions:
         - Principal:
             Fn::Sub:
