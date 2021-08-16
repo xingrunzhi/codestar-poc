@@ -5,6 +5,10 @@ Transform: AWS::Serverless-2016-10-31
 Parameters:
   TemplateArn:
     Type: String
+  SessionTemplateArn:
+    Type: String
+  SessionDataSetArn:
+    Type: String
   DataSetArn:
     Type: String
   QuickSightUser:
@@ -26,6 +30,35 @@ Resources:
             - DataSetPlaceholder: 'inventory-dataset-placeholder'
               DataSetArn:
                 Ref: DataSetArn
+      Permissions:
+        - Principal:
+            Fn::Sub:
+              - arn:aws:quicksight:${AWS::Region}:${AWS::AccountId}:user/default/${username}
+              - username:
+                  Ref: QuickSightUser
+          Actions:
+            - quicksight:RestoreAnalysis
+            - quicksight:UpdateAnalysisPermissions
+            - quicksight:DeleteAnalysis
+            - quicksight:QueryAnalysis
+            - quicksight:DescribeAnalysisPermissions
+            - quicksight:DescribeAnalysis
+            - quicksight:UpdateAnalysis
+  SampleAnalysisSession:
+    Type: AWS::QuickSight::Analysis
+    Properties:
+      AwsAccountId:
+        Ref: AWS::AccountId
+      AnalysisId: 'SampleSessionAnalysis'
+      Name: 'SampleSessionAnalysis'
+      SourceEntity:
+        SourceTemplate:
+          Arn:
+            Ref: SessionTemplateArn
+          DataSetReferences:
+            - DataSetPlaceholder: 'session-store'
+              DataSetArn:
+                Ref: SessionDataSetArn
       Permissions:
         - Principal:
             Fn::Sub:

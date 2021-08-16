@@ -609,7 +609,7 @@ Resources:
             ChangeSetName: pipeline-changeset
             RoleArn:
               !Sub 'arn:aws:iam::${TestAccount}:role/cloudformationdeployer-role'
-            StackName: !Sub 'awscodestar-${ProjectId}-infrastructure'
+            StackName: 'BundleAsset-Demo-Test'
             ParameterOverrides: !Sub '{"QuickSightUser":"IibsAdminAccess-DO-NOT-DELETE/AMSPortalWebsite+P-xrunzhi","Stage":"TEST"}'
             TemplateConfiguration: !Sub '${ProjectId}-BuildArtifact::template-configuration.json'
             TemplatePath: !Sub '${ProjectId}-BuildArtifact::template-export.yml'
@@ -627,7 +627,7 @@ Resources:
           Configuration:
             ActionMode: CHANGE_SET_EXECUTE
             ChangeSetName: pipeline-changeset
-            StackName: !Sub 'awscodestar-${ProjectId}-infrastructure'
+            StackName: 'BundleAsset-Demo-Test'
             RoleArn:
               !Sub 'arn:aws:iam::${TestAccount}:role/cloudformationdeployer-role'
           InputArtifacts: []
@@ -648,7 +648,7 @@ Resources:
             ChangeSetName: pipeline-changeset
             RoleArn:
               !Sub 'arn:aws:iam::${ProductionAccount}:role/cloudformationdeployer-role'
-            StackName: !Sub 'Prod-${ProjectId}-infrastructure'
+            StackName: 'BundleAsset-Demo-Prod'
             ParameterOverrides: !Sub '{"QuickSightUser":"IibsAdminAccess-DO-NOT-DELETE/AMSPortalWebsite+P-xrunzhi","Stage":"PROD"}'
             TemplateConfiguration: !Sub '${ProjectId}-BuildArtifact::template-configuration.json'
             TemplatePath: !Sub '${ProjectId}-BuildArtifact::template-export.yml'
@@ -666,7 +666,7 @@ Resources:
           Configuration:
             ActionMode: CHANGE_SET_EXECUTE
             ChangeSetName: pipeline-changeset
-            StackName: !Sub 'awscodestar-${ProjectId}-infrastructure'
+            StackName: 'BundleAsset-Demo-Prod'
             RoleArn:
               !Sub 'arn:aws:iam::${ProductionAccount}:role/cloudformationdeployer-role'
           InputArtifacts: []
