@@ -47,8 +47,8 @@ Resources:
             DataSourceArn:
               Ref: SampleDataSourceArn
             InputColumns:
-              - Name: SessionId
+              - Name: sessionid
                 Type: INTEGER
-              - Name: STATE
+              - Name: state
                 Type: STRING
             Name: 'session'
