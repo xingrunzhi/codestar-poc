@@ -25,4 +25,5 @@ phases:
 artifacts:
   files:
     - template-export.yml
+    - theme_template-export.yml
     - template-configuration.json
