@@ -12,6 +12,9 @@ Outputs:
       Fn::GetAtt:
         - SingleTheme
         - Arn
+    Export:
+      Name:
+        'SingleStackThemeArn'
 
 Resources:
   SingleTheme:

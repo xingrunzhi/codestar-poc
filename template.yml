@@ -164,9 +164,8 @@ Resources:
             - QSDataSetStack
             - Outputs.SampleDataSetArn
         ThemeArn:
-          Fn::GetAtt:
-            - SingleThemeStack
-            - Outputs.SampleThemeArn
+          Fn::ImportValue:
+            SingleStackThemeArn
         DataSetArn:
           Fn::FindInMap:
             - DashaboardConfiguration
