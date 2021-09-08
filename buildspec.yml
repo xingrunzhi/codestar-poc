@@ -15,6 +15,7 @@ phases:
     commands:
       # Use AWS SAM to package the application by using AWS CloudFormation
       - aws cloudformation package --template template.yml --s3-bucket aws-codestar-us-east-1-888519273200-codestar-poc-pipe --output-template template-export.yml
+      - aws cloudformation package --template theme_template.yml --s3-bucket aws-codestar-us-east-1-888519273200-codestar-poc-pipe --output-template theme_template-export.yml
   post_build:
     commands:
       # Do not remove this statement. This command is required for AWS CodeStar projects.
