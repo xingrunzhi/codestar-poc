@@ -57,20 +57,6 @@ Mappings:
       DataSetArn: arn:aws:quicksight:us-east-1:827082787819:dataset/bf6b0815-cc14-42fa-aaad-ba306e531d7d
 
 Resources:
-  QSThemeStack:
-    Type: AWS::CloudFormation::Stack
-    DeletionPolicy: Delete
-    UpdateReplacePolicy: Retain
-    Properties:
-      Parameters:
-        QuickSightUser:
-          Ref: QuickSightUser
-      TemplateURL:
-        Fn::Join:
-          - /
-          - - Ref: BundleS3HttpsLocation
-            - quicksight
-            - sampleTheme.template.yml
 
   QSDataSourceStack:
     Type: AWS::CloudFormation::Stack
@@ -156,7 +142,6 @@ Resources:
     DependsOn:
     - QSDataSourceStack
     - QSDataSetStack
-    - QSThemeStack
     - QSAnalysisStack
     - QSTemplateStack
     Type: AWS::CloudFormation::Stack
@@ -180,7 +165,7 @@ Resources:
             - Outputs.SampleDataSetArn
         ThemeArn:
           Fn::GetAtt:
-            - QSThemeStack
+            - SingleThemeStack
             - Outputs.SampleThemeArn
         DataSetArn:
           Fn::FindInMap:
